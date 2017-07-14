@@ -45,6 +45,7 @@ or implied, of Rafael Muñoz Salinas.
 #include <sensor_msgs/image_encodings.h>
 #include <aruco_ros/aruco_ros_utils.h>
 #include <aruco_msgs/MarkerArray.h>
+#include <geometry_msgs/Point.h>
 #include <tf/transform_listener.h>
 #include <tf/transform_broadcaster.h>
 #include <std_msgs/UInt32MultiArray.h>
@@ -187,6 +188,17 @@ public:
             marker_i.header.stamp = curr_stamp;
             marker_i.id = markers_.at(i).id;
             marker_i.confidence = 1.0;
+
+            marker_i.center.x = markers_.at(i).getCenter().x;
+            marker_i.center.y = markers_.at(i).getCenter().y;
+
+            for(size_t j=0; j < 4; ++j){
+              geometry_msgs::Point pixel;
+              pixel.x = markers_[i][j].x;
+              pixel.y = markers_[i][j].y;
+
+              marker_i.corners.push_back(pixel);
+            }
           }
 
           // if there is camera info let's do 3D stuff
