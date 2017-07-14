@@ -287,7 +287,7 @@ namespace aruco {
     if (setYPerpendicular) rotateXAxis(Rvec);
     ssize=markerSizeMeters;
 
-    ROS_DEBUG_STREAM("Marker "<<(*this)<<endl);
+    // cout<<"Marker "<<(*this)<<endl;
   }
 
   void Marker::rotateXAxis(Mat &rotation)
