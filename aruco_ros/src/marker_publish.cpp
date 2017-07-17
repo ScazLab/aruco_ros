@@ -232,7 +232,7 @@ public:
           }
 
           //publish marker array
-          if (marker_msg_->markers.size() > 0)
+          // if (marker_msg_->markers.size() > 0)
             marker_pub_.publish(marker_msg_);
         }
 
