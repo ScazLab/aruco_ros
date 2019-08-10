@@ -83,6 +83,25 @@ public:
       nh("~"),
       it(nh)
   {
+
+    std::string refinementMethod;
+    nh.param<std::string>("corner_refinement", refinementMethod, "LINES");
+    if ( refinementMethod == "SUBPIX" )
+      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::SUBPIX);
+    else if ( refinementMethod == "HARRIS" )
+      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::HARRIS);
+    else if ( refinementMethod == "NONE" )
+      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::NONE); 
+    else      
+      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::LINES);
+
+    float min_size;
+    float max_size;
+    nh.param<float>("marker_min_size", min_size, 0.03);
+    nh.param<float>("marker_max_size", max_size, 0.5);
+    mDetector.setMinMaxSize(min_size, max_size);
+
+
     image_sub = it.subscribe("/image", 1, &ArucoSimple::image_callback, this);
     cam_info_sub = nh.subscribe("/camera_info", 1, &ArucoSimple::cam_info_callback, this);
 
