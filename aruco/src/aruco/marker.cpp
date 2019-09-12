@@ -272,12 +272,18 @@ namespace aruco {
 
     cv::Mat ImagePoints(4,2,CV_32FC1);
 
-    //Set image points from the marker
+    //Set image points from the marker and calculate the centroid on image
+    // Point cent(0,0);
     for (int c=0;c<4;c++)
     {
       ImagePoints.at<float>(c,0)=((*this)[c%4].x);
       ImagePoints.at<float>(c,1)=((*this)[c%4].y);
+
+      // cent.x += ImagePoints.at<float>(c,0);
+      // cent.y += ImagePoints.at<float>(c,1)
     }
+    // cent.x/=4.;
+    // cent.y/=4.;
 
     cv::Mat raux,taux;
     cv::solvePnP(ObjPoints, ImagePoints, camMatrix, distCoeff,raux,taux);

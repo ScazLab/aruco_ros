@@ -46,6 +46,8 @@ or implied, of Rafael Muñoz Salinas.
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 
+#include <aruco_msgs/PoseWithCentroid.h>
+
 using namespace aruco;
 
 class ArucoSimple
@@ -62,7 +64,8 @@ private:
   image_transport::Publisher image_pub;
   image_transport::Publisher debug_pub;
   ros::Publisher pose_pub;
-  ros::Publisher transform_pub; 
+  ros::Publisher pose_with_centroid_pub;
+  ros::Publisher transform_pub;
   ros::Publisher position_pub;
   std::string marker_frame;
   std::string camera_frame;
@@ -91,8 +94,8 @@ public:
     else if ( refinementMethod == "HARRIS" )
       mDetector.setCornerRefinementMethod(aruco::MarkerDetector::HARRIS);
     else if ( refinementMethod == "NONE" )
-      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::NONE); 
-    else      
+      mDetector.setCornerRefinementMethod(aruco::MarkerDetector::NONE);
+    else
       mDetector.setCornerRefinementMethod(aruco::MarkerDetector::LINES);
 
     float min_size;
@@ -108,6 +111,7 @@ public:
     image_pub = it.advertise("result", 1);
     debug_pub = it.advertise("debug", 1);
     pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pose", 100);
+    pose_with_centroid_pub = nh.advertise<aruco_msgs::PoseWithCentroid>("pose_with_centroid", 100);
     transform_pub = nh.advertise<geometry_msgs::TransformStamped>("transform", 100);
     position_pub = nh.advertise<geometry_msgs::Vector3Stamped>("position", 100);
 
@@ -198,9 +202,9 @@ public:
                            cameraToReference);
             }
 
-            transform = 
-              static_cast<tf::Transform>(cameraToReference) 
-              * static_cast<tf::Transform>(rightToLeft) 
+            transform =
+              static_cast<tf::Transform>(cameraToReference)
+              * static_cast<tf::Transform>(rightToLeft)
               * transform;
 
             tf::StampedTransform stampedTransform(transform, curr_stamp,
@@ -215,6 +219,13 @@ public:
             geometry_msgs::TransformStamped transformMsg;
             tf::transformStampedTFToMsg(stampedTransform, transformMsg);
             transform_pub.publish(transformMsg);
+
+            aruco_msgs::PoseWithCentroid poseWithCentroidMsg;
+            poseWithCentroidMsg.header = transformMsg.header;
+            poseWithCentroidMsg.pose = poseMsg.pose;
+            poseWithCentroidMsg.image_centroid.x = markers[i].getCenter().x;
+            poseWithCentroidMsg.image_centroid.y = markers[i].getCenter().y;
+            pose_with_centroid_pub.publish(poseWithCentroidMsg);
 
             geometry_msgs::Vector3Stamped positionMsg;
             positionMsg.header = transformMsg.header;
