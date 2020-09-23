@@ -41,6 +41,10 @@ add_executable(double src/simple_double.cpp)
 add_dependencies(double aruco_ros ${PROJECT_NAME}_gencfg ${catkin_EXPORTED_TARGETS})
 target_link_libraries(double aruco_ros ${catkin_LIBRARIES})
 
+add_executable(multiple src/multiple.cpp)
+add_dependencies(multiple aruco_ros ${PROJECT_NAME}_gencfg ${catkin_EXPORTED_TARGETS})
+target_link_libraries(multiple aruco_ros ${catkin_LIBRARIES})
+
 add_executable(marker_publisher src/marker_publish.cpp)
 add_dependencies(marker_publisher aruco_ros ${PROJECT_NAME}_gencfg ${catkin_EXPORTED_TARGETS})
 target_link_libraries(marker_publisher aruco_ros ${catkin_LIBRARIES})
